@@ -1,0 +1,3 @@
+ic_budget:
+    resource: "@ICBudgetBundle/Resources/config/routing.yml"
+    prefix:   /

@@ -1,0 +1,7 @@
+parameters:
+#    ic_budget.example.class: IC\BudgetBundle\Example
+
+services:
+#    ic_budget.example:
+#        class: %ic_budget.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

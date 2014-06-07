@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="UTF-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>{% block title %}Welcome!{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
+        <h1>Budget application</h1>
         {% block body %}{% endblock %}
         {% block javascripts %}{% endblock %}
     </body>
