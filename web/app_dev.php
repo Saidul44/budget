@@ -1,5 +1,8 @@
 <?php
 
+date_default_timezone_set('Europe/Lisbon');
+ini_set('date.timezone', 'Europe/Lisbon');
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Debug\Debug;
 
