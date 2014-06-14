@@ -23,6 +23,11 @@ class Category
     protected $name;
 
     /**
+     * @ORM\OneToMany(targetEntity="Subcategory", mappedBy="category")
+     */
+    protected $subcategories;
+
+    /**
      * Get id
      *
      * @return integer 
@@ -53,5 +58,45 @@ class Category
     public function getName()
     {
         return $this->name;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->subcategories = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add subcategories
+     *
+     * @param \IC\BudgetBundle\Entity\Subcategory $subcategories
+     * @return Category
+     */
+    public function addSubcategory(\IC\BudgetBundle\Entity\Subcategory $subcategories)
+    {
+        $this->subcategories[] = $subcategories;
+
+        return $this;
+    }
+
+    /**
+     * Remove subcategories
+     *
+     * @param \IC\BudgetBundle\Entity\Subcategory $subcategories
+     */
+    public function removeSubcategory(\IC\BudgetBundle\Entity\Subcategory $subcategories)
+    {
+        $this->subcategories->removeElement($subcategories);
+    }
+
+    /**
+     * Get subcategories
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getSubcategories()
+    {
+        return $this->subcategories;
     }
 }

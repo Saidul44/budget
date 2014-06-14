@@ -1,3 +1,15 @@
 hello:
     path:  /hello/{name}
     defaults: { _controller: ICBudgetBundle:Hello:index }
+
+category_list:
+    path:   /category
+    defaults: { _controller: ICBudgetBundle:Category:index }
+
+transaction_list:
+    path:   /transaction
+    defaults: { _controller: ICBudgetBundle:Transaction:index }
+
+transaction_new:
+    path:   /transaction/new
+    defaults: { _controller: ICBudgetBundle:Transaction:new }

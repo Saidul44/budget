@@ -1,0 +1,14 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+<table>
+    <tr> <th>Date</th> <th>Description</th> <th>Value</th> </tr>
+	{% for transaction in transactions %}
+	<tr>{{ transaction.date }}</tr>
+	<tr>{{ transaction.description }}</tr>
+	<tr>{{ transaction.value }}</tr>
+	{% endfor %}
+</table>
+
+{% endblock %}
