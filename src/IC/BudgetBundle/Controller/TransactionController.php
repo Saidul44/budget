@@ -15,6 +15,11 @@ class TransactionController extends Controller
             getRepository('ICBudgetBundle:Transaction')->
             findAll();
         
+        $transactions = array(
+            array('date' => 12392931, 'description' => 'Description', 'value' => '10.00'),
+            array('date' => 12392931, 'description' => 'Description', 'value' => '10.00')
+            );
+        
         return $this->render(
             'ICBudgetBundle:Transaction:list.html.twig',
             array('transactions' => $transactions));

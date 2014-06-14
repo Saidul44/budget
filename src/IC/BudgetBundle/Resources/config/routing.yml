@@ -1,6 +1,6 @@
-hello:
-    path:  /hello/{name}
-    defaults: { _controller: ICBudgetBundle:Hello:index }
+dashboard:
+    path:  /
+    defaults: { _controller: ICBudgetBundle:Default:index }
 
 category_list:
     path:   /category
