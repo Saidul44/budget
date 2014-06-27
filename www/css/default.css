@@ -1,0 +1,125 @@
+
+body {
+    margin: 0px;
+    padding: 0px;
+    
+    font-family: sans-serif;
+}
+
+div#main-area {
+    float: left;
+    border: 0px;
+    padding: 25px;
+    padding-left: 40px;
+}
+
+div#title {
+    background-color: #191970;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+div.actions {
+    margin-top: 10px;
+}
+
+h1 {
+    margin: 0px;
+    padding: 0px;
+    font-family: sans-serif;
+}
+
+ul.subcategories li.add {
+    display: none;
+    visibility: hidden;
+    background-color: black;
+}
+
+
+/**
+ * Menu
+ */
+
+div#menu {
+    width: 100%;
+    border: 0px;
+    background-color: black;
+    border-top: 1px solid white;
+    color: white;
+    padding: 10px;
+    text-align: right;
+}
+
+div#menu h2 {
+    padding: 0px;
+    margin: 0px;
+    display: inline;
+    float: left;
+}
+
+div#menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    padding-right: 25px;
+}
+
+div#menu ul li {
+    display: inline;
+}
+
+div#menu ul li:after {
+    content: " | ";
+}
+
+div#menu ul li:last-child:after {
+    content: "";
+}
+
+div#menu ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+div#menu ul li a:hover {
+    color: lightblue;
+    text-decoration: underline;
+}
+
+
+/**
+ * The rest
+ */
+
+
+
+.table-hover {
+    border-collapse:collapse;
+}
+
+.table-hover th {
+    padding: 5px;
+    margin: 0px;
+    border-bottom: 1px solid black;
+    background-color: #191970;
+    color: white;
+}
+
+.table-hover td {
+    padding: 5px;
+    margin: 0px;
+}
+
+.table-hover tr {
+    margin: 0px;
+    padding: 0px;
+}
+
+tr.add {
+	visibility: collapse;	
+}
+
+.table-hover tbody > tr:hover {
+    background-color: #F8F8F8;
+}
