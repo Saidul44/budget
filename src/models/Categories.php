@@ -21,7 +21,19 @@
 		function setParent($parent) {
 			$this->parent_id = $parent->getId();
 		}
-		
+
+		function setParentById($id) {
+			if($id == null) {
+				$this->parent_id = null;
+				return;
+			}
+				
+			if($category = Categories::getCategoryById($id))
+				$this->parent_id = $category->getId();
+			else
+				throw new Exception('Parent_id is not valid.');
+		}
+				
 		function setName($name) {
 			$this->name = $name;
 		}
@@ -42,8 +54,21 @@
 			$categories = array();
 			while($row = $stmt->fetch())
 				$categories[] = new Category($row);
-			
+
 			return $categories;
+		}
+		
+		static function getRootCategory() {
+			global $database;
+			
+			$stmt = $database->prepare("SELECT * FROM categories WHERE parent_id IS NULL");
+			$stmt->execute();
+			$row = $stmt->fetch();
+			
+			if($row)
+				return new Category($row);
+			else
+				return null;
 		}
 		
 		static function getCategoryById($id) {
@@ -51,10 +76,44 @@
 			
 			$stmt = $database->prepare('SELECT * FROM categories WHERE id = :id');
 			$stmt->execute(array('id' => $id));
-			return new Category($stmt->fetch());
+			$row = $stmt->fetch();
+			
+			if($row)			
+				return new Category($row);
+			else
+				return null;
 		}
 		
 		static function save($category) {
+			global $database;
+
+			if($category->getParent() == null) {
+				throw new Exception('Invalid parent id.');
+			}
 			
+			if($category->getId()) {
+				// Update
+				$stmt = $database->prepare('UPDATE categories SET parent_id = :parent_id, name = :name WHERE id = :id');
+				$stmt->execute(array(
+						'id' => $category->getId(),
+						'parent_id' => $category->getParent()->getId(),
+						'name' => $category->getName()
+				));
+			} else {				
+				// Create
+				$stmt = $database->prepare('INSERT INTO categories(name, parent_id) ' .
+						'VALUES(:name, :parent_id)');
+
+				$stmt->execute(array(
+						'name' => $category->getName(),
+						'parent_id' => $category->getParent()->getId()
+				));
+			}
+		}
+		
+		static function delete($category) {
+			global $database;
+			$stmt = $database->prepare('DELETE FROM categories WHERE id = :id');
+			$stmt->execute(array('id' => $category->getId()));
 		}
 	}

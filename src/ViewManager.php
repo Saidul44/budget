@@ -22,13 +22,33 @@
 		function linkToResource($resource)
 		{
 			global $webRoot;
-			echo(htmlentities($webRoot . '/' . $resource));
-		}		
+			return $webRoot . '/' . $resource;
+		}
+
+		function renderResourceLink($resource)
+		{
+			echo(htmlentities($this->linkToResource($resource)));
+		}
 		
 		function linkTo($controller, $action = 'index', $values = array())
 		{
 			global $webRoot;
-			echo(htmlentities($webRoot . '/index.php?controller=' . $controller . '&action=' . $action));
+			
+			$tmp = $webRoot . '/index.php?controller=' . $controller . '&action=' . $action;
+			
+			foreach($values as $key => $value) {
+				$tmp .= '&';
+				$tmp .= $key;
+				$tmp .= '=';
+				$tmp .= $value;
+			}
+			
+			return $tmp;
 		}		
+		
+		function renderLink($controller, $action = 'index', $values = array())
+		{
+			echo(htmlentities($this->linkTo($controller, $action, $values)));
+		}
 		
 	}

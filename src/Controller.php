@@ -27,4 +27,9 @@
 			require('views' . DIRECTORY_SEPARATOR . $name);
 			return ob_get_clean();
 		}
+		
+		function redirect($controller, $action, $options = array())
+		{
+			header('Location: ' . $this->viewManager->linkTo($controller, $action, $options));
+		}
 	}

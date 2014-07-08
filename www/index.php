@@ -1,8 +1,8 @@
 <?php 
-	$baseDirectory = realpath('/home/ivarclemens/public_html/budget-simple');
+	$baseDirectory = realpath('/home/ivarclemens/public_html/budget');
 	set_include_path(get_include_path() . PATH_SEPARATOR . $baseDirectory . DIRECTORY_SEPARATOR . 'src');
 	
-	$webRoot = '/budget-simple/www';
+	$webRoot = '/budget/www';
 	
 	$debug = 1;
 	

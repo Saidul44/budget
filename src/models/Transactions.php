@@ -42,7 +42,7 @@
 			if($person = People::getPersonById($id))
 				$this->person_id = $person->getId();
 			else
-				throw new Exception('Person_id is note valid.');
+				throw new Exception('Person_id is not valid.');
 		}
 		
 		function setPerson($person) {
@@ -61,7 +61,7 @@
 			if($category = Categories::getCategoryById($id))
 				$this->category_id = $category->getId();
 			else
-				throw new Exception('Category_id is note valid.');
+				throw new Exception('Category_id is not valid.');
 		}
 		
 		function setCategory($catgory) {
@@ -98,11 +98,27 @@
 
 	class Transactions
 	{
-		static function getTransactions() {			
+		static function getTransactionCount()
+		{
+			global $database;
+			
+			$stmt = $database->prepare('SELECT COUNT(*) as count FROM transactions');
+			$stmt->execute();
+			
+			$row = $stmt->fetch();
+			return $row['count'];
+		}
+		
+		static function getTransactions($start, $count) {			
 			global $database;
 				
 			/* Get transactions */
-			$stmt = $database->prepare('SELECT t.*, p.name as person_name, c.name as category_name FROM transactions as t, people as p, categories as c where t.person_id = p.id and t.category_id = c.id ORDER BY timestamp, description');
+			$stmt = $database->prepare('SELECT t.*, p.name as person_name, c.name as category_name ' .
+					'FROM transactions as t, people as p, categories as c where t.person_id = p.id and t.category_id = c.id ' .
+					'ORDER BY timestamp, description ' .
+					'LIMIT :start, :count');
+			$stmt->bindValue('start', $start, PDO::PARAM_INT);
+			$stmt->bindValue('count', $count, PDO::PARAM_INT);
 			$stmt->execute();
 				
 			$transactions = array();
@@ -147,5 +163,12 @@
 						'amount' => $transaction->getAmount()
 				));
 			}
+		}
+		
+		static function delete($transaction) {
+			global $database;
+			
+			$stmt = $database->prepare('DELETE FROM transactions WHERE id = :id');
+			$stmt->execute(array('id' => $transaction->getId())); 
 		}
 	}
