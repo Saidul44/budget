@@ -10,13 +10,18 @@ div#main-area {
     float: left;
     border: 0px;
     padding: 25px;
-    padding-left: 40px;
+
+    margin-left: 40px;
+    margin-right: 40px;
+    
+ 	width: 90%;
 }
 
 div#title {
     background-color: #191970;
     color: white;
     padding: 20px;
+    margin: 0px;
     text-align: center;
 }
 

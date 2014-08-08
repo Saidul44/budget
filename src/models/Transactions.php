@@ -1,12 +1,11 @@
 <?php 
 	require_once('Categories.php');
-	require_once('People.php');
-
+	require_once('Subcategories.php');
+	
 	class Transaction
 	{
 		private $id;
-		private $person_id;
-		private $category_id;
+		private $subcategory_id;
 		private $timestamp;
 		private $description;
 		private $amount;
@@ -14,8 +13,7 @@
 		function __construct($fields = array()) {
 			if(array_key_exists('id', $fields)) $this->id = $fields['id'];
 
-			$this->setPersonById($fields['person_id']);
-			$this->setCategoryById($fields['category_id']);
+			$this->setSubcategoryById($fields['subcategory_id']);
 			$this->setTimestamp($fields['timestamp']);
 			$this->setDescription($fields['description']);
 			$this->setAmount($fields['amount']);
@@ -44,39 +42,28 @@
 			else
 				throw new Exception('Person_id is not valid.');
 		}
-		
-		function setPerson($person) {
-			if($person->getId())
-				$this->person_id = $person->getId();
-			else
-				throw new Exception('Person has not been saved.');
-		}
-		
-		function setCategoryById($id) {
+				
+		function setSubcategoryById($id) {
 			if($id == null) {
-				$this->category_id = null;
+				$this->subcategory_id = null;
 				return;
 			}
 			
-			if($category = Categories::getCategoryById($id))
-				$this->category_id = $category->getId();
+			if($subcategory = Subcategories::getSubcategoryById($id))
+				$this->subcategory_id = $subcategory->getId();
 			else
-				throw new Exception('Category_id is not valid.');
+				throw new Exception('Subcategory_id is not valid.');
 		}
 		
-		function setCategory($catgory) {
-			if($category->getId())
-				$this->category_id = $category->getId();
+		function setSubcategory($catgory) {
+			if($subcategory->getId())
+				$this->subcategory_id = $subcategory->getId();
 			else
-				throw new Exception('Category has not been saved.');
+				throw new Exception('Subcategory has not been saved.');
 		}
-		
-		function getPerson() {
-			return People::getPersonById($this->person_id);
-		}
-		
-		function getCategory() {
-			return Categories::getCategoryById($this->category_id);
+				
+		function getSubcategory() {
+			return Subcategories::getSubcategoryById($this->subcategory_id);
 		}
 		
 		function setDescription($description) {
@@ -113,8 +100,9 @@
 			global $database;
 				
 			/* Get transactions */
-			$stmt = $database->prepare('SELECT t.*, p.name as person_name, c.name as category_name ' .
-					'FROM transactions as t, people as p, categories as c where t.person_id = p.id and t.category_id = c.id ' .
+			$stmt = $database->prepare('SELECT t.*, c.name AS category_name, s.name AS subcategory_name ' .
+					'FROM transactions AS t, categories AS c, subcategories AS s ' .
+					'WHERE t.subcategory_id = s.id AND c.id = s.category_id ' .
 					'ORDER BY timestamp, description ' .
 					'LIMIT :start, :count');
 			$stmt->bindValue('start', $start, PDO::PARAM_INT);
@@ -141,23 +129,20 @@
 			
 			if($transaction->getId()) {
 				// Update
-				$stmt = $database->prepare('UPDATE transactions SET person_id = :person_id, category_id = :category_id, timestamp = :timestamp, description = :description , amount = :amount WHERE id = :id');
+				$stmt = $database->prepare('UPDATE transactions SET subcategory_id = :subcategory_id, timestamp = :timestamp, description = :description , amount = :amount WHERE id = :id');
 				$stmt->execute(array(
 						'id' => $transaction->getId(),
-						'person_id' => $transaction->getPerson()->getId(),
-						'category_id' => $transaction->getCategory()->getId(),
+						'subcategory_id' => $transaction->getSubcategory()->getId(),
 						'timestamp' => $transaction->getTimestamp(),
 						'description' => $transaction->getDescription(),
 						'amount' => $transaction->getAmount()					
 				));
 			} else {
 				// Create
-				$stmt = $database->prepare('INSERT INTO transactions(person_id, category_id, timestamp, description, amount) ' .
-						'VALUES(:person_id, :category_id, :timestamp, :description, :amount)');
-
+				$stmt = $database->prepare('INSERT INTO transactions(subcategory_id, timestamp, description, amount) ' .
+						'VALUES(:subcategory_id, :timestamp, :description, :amount)');
 				$stmt->execute(array(
-						'person_id' => $transaction->getPerson()->getId(),
-						'category_id' => $transaction->getCategory()->getId(),
+						'subcategory_id' => $transaction->getSubcategory()->getId(),
 						'timestamp' => $transaction->getTimestamp(),
 						'description' => $transaction->getDescription(),
 						'amount' => $transaction->getAmount()

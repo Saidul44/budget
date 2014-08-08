@@ -6,7 +6,8 @@
         <link rel="stylesheet" type="text/css" href="<?php $viewManager->renderResourceLink('css/default.css'); ?>" />
     </head>
     <body>
-        <div id="title"><h1>Budget application<h1></div>
+        <div id="title"><h1>Budget application</h1></div>
+		
         <div id="menu">
             <ul>
                 <li><a href="<?php $viewManager->renderLink('default'); ?>">Home</a></li>

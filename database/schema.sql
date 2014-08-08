@@ -26,6 +26,16 @@ CREATE TABLE categories (
 
 INSERT INTO categories VALUES(0, NULL, '');
 
+CREATE TABLE subcategories (
+	id INT AUTO_INCREMENT,
+	category_id INT NOT NULL,
+	
+	name VARCHAR(50),
+	
+	PRIMARY KEY(id),
+	FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE RESTRICT
+);
+
 CREATE TABLE transactions (
   id INT AUTO_INCREMENT,
   person_id INT NOT NULL, 

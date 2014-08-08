@@ -2,6 +2,8 @@
 	$baseDirectory = realpath('/home/ivarclemens/public_html/budget');
 	set_include_path(get_include_path() . PATH_SEPARATOR . $baseDirectory . DIRECTORY_SEPARATOR . 'src');
 	
+	date_default_timezone_set('Europe/Lisbon');
+	
 	$webRoot = '/budget/www';
 	
 	$debug = 1;

@@ -35,7 +35,6 @@ Page <?php echo($options['navigation']['page']); ?> of <?php echo($options['navi
 	<thead>
 		<tr>
 			<th>Date</th>
-			<th>User</th>
 			<th>Category</th>
 			<th>Description</th>
 			<th>Amount</th>
@@ -49,8 +48,7 @@ Page <?php echo($options['navigation']['page']); ?> of <?php echo($options['navi
 	?>
 		<tr>
 			<td><?php echo($transaction->getTimestamp()); ?></td>
-			<td><?php echo($transaction->getPerson()->getName());; ?></td>
-			<td><?php echo($transaction->getCategory()->getName()); ?></td>
+			<td><?php echo($transaction->getSubcategory()->getName()); ?></td>
 			<td><?php echo($transaction->getDescription()); ?></td>
 			<td align="right">&euro; <?php echo(sprintf('%.02f', $transaction->getAmount()/100.0)); ?></td>
 			<td><a href="<?php $viewManager->renderLink('transaction', 'edit', array('id' => $transaction->getId())); ?>">Edit</a></td>

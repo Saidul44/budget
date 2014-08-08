@@ -1,38 +1,20 @@
 <?php 
-	function field_person($options, $i, $value)
+	function field_subcategory($options, $i, $value)
 	{
-		echo("<select id=\"person_id_$i\" name=\"person_id_$i\">");
+		echo("<select id=\"subcategory_id_$i\" name=\"subcategory_id_$i\">");
 		
-		foreach($options['people'] as $person) {
-			$id = $person->getId();
-
-			echo("<option value=\"$id\"");
-			if($id == $value)
-				echo(" selected");
-			echo(">");
-			echo($person->getName());
-			echo("</option>");
-		}
-
-		echo("</select>");
-	}
-
-	function field_category($options, $i, $value)
-	{
-		echo("<select id=\"category_id_$i\" name=\"category_id_$i\">");
-		
-		foreach($options['categories'] as $category) {
-			$id = $category->getId();
+		foreach($options['subcategories'] as $subcategory) {
+			$id = $subcategory->getId();
 
 			echo("<option value=\"$id\"");
 			if($id == $value)
 				echo( "selected");
 			echo(">");
 
-			$parent = $category->getParent();		
-			if($parent->getName() != '')
-				echo($parent->getName() . ' / ');
-			echo($category->getName()); 
+			$parent = $subcategory->getCategory();
+			echo($subcategory->getName()); 
+			if($parent->getName() != $subcategory->getName())
+				echo(' (' . $parent->getName() . ')');
 			echo("</option>");
 		}
 		
@@ -82,7 +64,6 @@
 	<thead>
 		<tr>
 			<th>Date</th>
-			<th>User</th>
 			<th>Category</th>
 			<th>Description</th>
 			<th>Amount</th>
@@ -96,8 +77,7 @@
 	?>
 		<tr>
 			<td><?php field_date($i, $transaction->getTimestamp()); ?></td>
-			<td><?php field_person($options, $i, $transaction->getPerson()->getId()); ?></td>
-			<td><?php field_category($options, $i, $transaction->getCategory()->getId()); ?></td>
+			<td><?php field_subcategory($options, $i, $transaction->getCategory()->getId()); ?></td>
 			<td><?php field_descr($i, $transaction->getDescription()); ?></td>
 			<td>&euro; <?php field_amount($i, $transaction->getAmount()); ?></td>
 			<td>
@@ -119,8 +99,7 @@
 	
 		<tr>
 			<td><?php field_date($i, $date); ?></td>
-			<td><?php field_person($options, $i, 0); ?></td>
-			<td><?php field_category($options, $i, 0); ?></td>
+			<td><?php field_subcategory($options, $i, 0); ?></td>
 			<td><?php field_descr($i, ""); ?></td>
 			<td>&euro; <?php field_amount($i, "0.00"); ?></td>
 			<td><a href="javascript: clear(<?php echo($i); ?>);">Clear</a></td>
