@@ -1,5 +1,5 @@
 <?php 
-$routes = array(
+$routes = array(		
 	'transaction' => array(
 		'type' => 'segment',
 		'options' => array(
@@ -7,10 +7,39 @@ $routes = array(
 			'constraints' => array('action' => '[A-Za-z]*'),
 			'defaults' => array(
 				'controller' => 'Budget\Controller\Transaction',
-				'action' => 'index'
+				'action' => 'list',
+				'year' => date('o'),
+				'week' => date('W')
 			)
 		)		
-	)
+	),
+		
+	'transaction_list' => array(
+		'type' => 'segment',
+		'options' => array(
+			'route' => '/transaction/list[/week/:week[/year/:year]]',
+			'constraints' => array('week' => '[0-9]+'),
+			'defaults' => array(
+			'controller' => 'Budget\Controller\Transaction',
+				'action' => 'list',
+				'year' => date('o'),
+				'week' => date('W')
+			)
+		)
+	),		
+
+	'transaction_delete' => array(
+		'type' => 'segment',
+		'options' => array(
+			'route' => '/transaction/delete/id/:id',
+			'constraints' => array('id' => '[0-9]+'),
+			'defaults' => array(
+				'controller' => 'Budget\Controller\Transaction',
+				'action' => 'delete',
+			)
+		)
+	),
+		
 );
 
 return array(

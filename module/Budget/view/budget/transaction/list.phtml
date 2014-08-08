@@ -1,8 +1,34 @@
 <?php 
 	function write_subtotal($date, $amount) {
-		echo('<tr style="border-top: 1px solid #000000"><td></td><td colspan="3"</td><td><i>&euro; ' . sprintf('%.2f', $amount / 100.0) . '</i><br />&nbsp;</td></tr>');
+		echo('<tr style="border-top: 1px solid #000000"><td></td><td colspan="3"</td><td><i>&euro; ' . sprintf('%.2f', $amount / 100.0) . '</i><br />&nbsp;</td><td></td></tr>');
 	}
 ?>
+
+<script>
+	function delete_transaction(id) 
+	{
+		if(!confirm('Are you sure you want to delete this transaction?'))
+			return;
+		
+		var http = new XMLHttpRequest();
+		var url = '<?php echo $this->basePath() . '/transaction/delete/id'; ?>' + id;
+		var params = 'confirm=yes';
+
+		http.open('POST', url, true);
+		http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		http.setRequestHeader('Content-length', params.length);
+		http.setRequestHeader('Connection', 'close');
+
+		http.onreadystatechange = function() {
+			if(http.readyState == 4) {
+				document.location = '<?php echo $this->basePath() . '/transaction/list'; ?>';
+			}
+		}
+		
+		http.send(params);
+		alert(url);		
+	}
+</script>
 
 <style>
 	div#week_overview {
@@ -25,8 +51,11 @@
 </style>
 
 <div id="week_overview">
+	<!-- Warning: this doesn't take first and last week into account -->
 	<span id="week_number">
-		Week <?=date('W', $this->timespan[0])?>
+		<a href="<?php echo $this->basePath() . '/transaction/list/week/' . ($this->week - 1) . '/year/' . $this->year ?>">&lt;&lt;</a>
+		Week <?php echo $this->week; ?>
+		<a href="<?php echo $this->basePath() . '/transaction/list/week/' . ($this->week + 1) . '/year/' . $this->year ?>">&gt;&gt;</a>
 	</span>
 	
 	<span id="week_dates">
@@ -43,6 +72,7 @@
 			<th>Subcategory</th>
 			<th>Description</th>
 			<th>Amount</th>
+			<th></th>
 		</tr>		
 		</thead>
 
@@ -65,7 +95,8 @@
 				<td><?=$row['category']?></td>
 				<td><?=$row['subcategory']?></td>
 				<td><?=$row['description']?></td>
-				<td>&euro; <?=sprintf('%.02f', $row['amount'] / 100.0)?></td>				
+				<td>&euro; <?=sprintf('%.02f', $row['amount'] / 100.0)?></td>
+				<td><a href="javascript:delete_transaction(<?php echo $row['id'] ?>);">Delete</a></td>				
 			</tr>	
 <?php
 		$subtotal += $row['amount'];
@@ -76,7 +107,7 @@
 		</tbody>
 	<tfoot>
 		<tr>		
-			<td colspan="5">
+			<td colspan="6">
 			<a href="<?php $this->basePath . '/transaction/add' ?>">Add new transactions</a>
 			</td>
 		</tr>

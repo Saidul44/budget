@@ -6,10 +6,6 @@
 	use Zend\View\Model\ViewModel;
 	use Zend\Mvc\Controller\AbstractActionController;
 		
-	require_once('models/People.php');
-	require_once('models/Categories.php');
-	require_once('models/Transactions.php');
-
 
 	function parseDecimal($str) {
 		$str = str_replace(",", ".", $str);
@@ -96,18 +92,18 @@
 		{
 			global $database;
 			
-			/* Find timespan to show data for */
+			/* Get year/week to show */						
+			$routeMatch = $this->getEvent()->getRouteMatch();
 			
-			if(array_key_exists('date', $_GET))			
-				$date = strtotime($_GET['date']);
-			else 
-				$date = strtotime(date('Y-m-d'));
+			$year = $routeMatch->getParam('year');
+			$week = $routeMatch->getParam('week');
 			
-			$dow = date('w', $date);
-			$week_number = date('W', $date);
-			
-			$timespan[0] = $date - ($dow - 1) * 3600 * 24;
-			$timespan[1] = $timespan[0] + 6 * 3600 * 24;		
+			/* Compute start and end state */
+			$dto = new \DateTime();
+			$dto->setISODate($year, $week);
+						
+			$timespan[0] = $dto->getTimestamp();
+			$timespan[1] = $dto->modify('+6 days')->getTimestamp();		
 			
 			
 			/* Get data for time period */
@@ -134,15 +130,17 @@
 					GROUP BY week, category_id
 					ORDER BY week DESC, category";
 
-			$first_week = $week_number - 10;
-			$last_week = $week_number;
+			$first_week = $week - 10;
+			
 			$stmt_overview = $database->prepare($query);
 			$stmt_overview->bindParam('first_week', $first_week);
-			$stmt_overview->bindParam('last_week', $first_week);
+			$stmt_overview->bindParam('last_week', $week);
 			$stmt_overview->execute();
 			
 			/* Output stage */					
 			$viewModel = new ViewModel(array(
+				'year' => $year,
+				'week' => $week,
 				'timespan'     => $timespan,
 				'transactions' => $stmt,
 				'overview'     => $stmt_overview));
@@ -187,27 +185,24 @@
 			return $viewModel;			
 		}		
 		
+		
 		function editAction()
 		{
-			$id = intval($_GET['id']);
-			
-			$transaction = Transactions::getTransactionById($id);
-			
-			$this->setFragmentValue('title', 'Edit transaction #' . $id);
-			$this->setFragment('main-area', 'transaction_form.php',
-					array('transactions' => array($transaction)));
-				
-			return $this->renderPage('base.php');
 		}
+		
 		
 		function deleteAction()
 		{
-			$id = intval($_POST['transaction_id']);
-			$transaction = Transactions::getTransactionById($id);
+			$routeMatch = $this->getEvent()->getRouteMatch();				
+			$id = $routeMatch->getParam('id');
 				
-			Transactions::delete($transaction);
-				
-			return $this->redirect('transaction', 'list');
-				
+			$transaction = $this->getTransactionTable()->getTransaction($id);
+
+			$week = date('W', strtotime($transaction->timestamp));
+			$year = date('o', strtotime($transaction->timestamp));
+			
+			$this->getTransactionTable()->deleteTransaction($id);
+
+			return $this->redirect()->toRoute('transaction_list', array('week' => $week, 'year' => $year));
 		}
 	}

@@ -50,6 +50,7 @@
 		
 		public function deleteTransaction($id)
 		{
+			$this->tableGateway->delete(array('id' => $id));
 		}
 	}
 	
