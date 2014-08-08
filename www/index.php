@@ -1,10 +1,41 @@
-<?php 
-	$baseDirectory = realpath('/home/ivarclemens/public_html/budget');
-	set_include_path(get_include_path() . PATH_SEPARATOR . $baseDirectory . DIRECTORY_SEPARATOR . 'src');
+<?php
+	/**
+	 * Budget Applications
+	 * 
+	 * @copyright Copyright (c) 2014 Ivar Clemens
+	 */
+
+	$debug = 1;
 	
+	if($debug) {
+		error_reporting(E_ALL);
+		ini_set('display_errors', true);
+	}
+	
+	// Set time zone (should use value from config instead
 	date_default_timezone_set('Europe/Lisbon');
 	
-	$webRoot = '/budget/www';
+	// Change directory to application root 
+	chdir(dirname(__DIR__));
+
+	// Instantiate auto loader
+	if(!file_exists('vendor/Zend/Loader/AutoloaderFactory.php'))
+		show_error('Could not find autoloader.');
+		
+	include 'vendor/Zend/Loader/AutoloaderFactory.php';
+	
+	if(!class_exists('Zend\Loader\AutoloaderFactory'))
+		show_error('Could not load autoloader.');
+	
+	Zend\Loader\AutoloaderFactory::factory(array(
+		'Zend\Loader\StandardAutoloader' => array(
+		'autoregister_zf' => true)));
+
+	// Code that still needs to be updated
+	$baseDirectory = realpath('/home/ivarclemens/applications/budget');
+	set_include_path(get_include_path() . PATH_SEPARATOR . $baseDirectory . DIRECTORY_SEPARATOR . 'src');
+	
+	$webRoot = '/budget';
 	
 	$debug = 1;
 	
@@ -13,12 +44,14 @@
 		error_reporting(~0);
 	}
 	
+	$global = require 'config/autoload/global.php';
+	$local = require 'config/autoload/local.php';
+	
 	/* Connect to the database */
-	require_once('config.php');
-	$database = new PDO($config['dbtype'] . 
-			':host=' . $config['hostname'] . 
-			';dbname=' . $config['database'],
-			$config['username'], $config['password']);
+	$database = new PDO('mysql' . 
+			':host=' . $global['db']['hostname'] . 
+			';dbname=' . $global['db']['database'],
+			$local['db']['username'], $local['db']['password']);
 
 	/* Dispatch request */
 	require_once('Dispatcher.php');		
@@ -26,3 +59,11 @@
 	$payload = $dispatcher->dispatch();
 	
 	echo($payload);
+
+	
+	function show_error($message)
+	{
+		echo($message);
+		exit(1);
+	}
+	
