@@ -1,7 +1,11 @@
 <?php
+	namespace Budget\Controller;
+	
+	//use Budget\Controller;
+	
 	require_once('Controller.php');
 	
-	class DefaultController extends Controller
+	class IndexController extends Controller
 	{
 		function indexAction() 
 		{

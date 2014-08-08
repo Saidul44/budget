@@ -18,6 +18,7 @@
 	// Change directory to application root 
 	chdir(dirname(__DIR__));
 
+	
 	// Instantiate auto loader
 	if(!file_exists('vendor/Zend/Loader/AutoloaderFactory.php'))
 		show_error('Could not find autoloader.');
@@ -31,6 +32,7 @@
 		'Zend\Loader\StandardAutoloader' => array(
 		'autoregister_zf' => true)));
 
+	
 	// Code that still needs to be updated
 	$baseDirectory = realpath('/home/ivarclemens/applications/budget');
 	set_include_path(get_include_path() . PATH_SEPARATOR . $baseDirectory . DIRECTORY_SEPARATOR . 'src');
@@ -43,7 +45,9 @@
 		ini_set('display_errors', 1);
 		error_reporting(~0);
 	}
+
 	
+	// Setup database
 	$global = require 'config/autoload/global.php';
 	$local = require 'config/autoload/local.php';
 	
@@ -53,12 +57,9 @@
 			';dbname=' . $global['db']['database'],
 			$local['db']['username'], $local['db']['password']);
 
-	/* Dispatch request */
-	require_once('Dispatcher.php');		
-	$dispatcher = new Dispatcher();
-	$payload = $dispatcher->dispatch();
 	
-	echo($payload);
+	// Start application
+	Zend\Mvc\Application::init(require 'config/application.config.php')->run();
 
 	
 	function show_error($message)
