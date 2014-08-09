@@ -107,35 +107,10 @@
 			
 			
 			/* Get data for time period */
-			$query = "SELECT category.name AS category, subcategory.name AS subcategory, transaction.*					
-					  FROM transaction, category, subcategory 					
-					  WHERE subcategory.category_id = category.id AND subcategory_id = subcategory.id AND timestamp >= :timespan_0 AND timestamp <= :timespan_1 
-					  ORDER BY timestamp, transaction.id";
-
-			$timespan_0 = date('Y-m-d', $timespan[0]);
-			$timespan_1 = date('Y-m-d', $timespan[1]);
+			$stmt = $this->getTransactionTable()->getTransactionsInPeriod($timespan[0], $timespan[1]);
 			
-			$stmt = $database->prepare($query);
-			$stmt->bindParam('timespan_0', $timespan_0);
-			$stmt->bindParam('timespan_1', $timespan_1);
-			$stmt->execute();
-				
 			/* Get data for weekly overview */
-			$query = "SELECT
-					WEEK(timestamp) + 1 as week,
-					SUM(amount) as total,
-					category.name AS category
-					FROM transaction, category, subcategory
-					WHERE subcategory.category_id = category.id AND subcategory_id = subcategory.id 
-					GROUP BY week, category_id
-					ORDER BY week DESC, category";
-
-			$first_week = $week - 10;
-			
-			$stmt_overview = $database->prepare($query);
-			$stmt_overview->bindParam('first_week', $first_week);
-			$stmt_overview->bindParam('last_week', $week);
-			$stmt_overview->execute();
+			$stmt_overview = $this->getTransactionTable()->getOverviewBy('week', true);
 			
 			/* Output stage */					
 			$viewModel = new ViewModel(array(

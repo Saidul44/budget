@@ -11,7 +11,7 @@
 			return;
 		
 		var http = new XMLHttpRequest();
-		var url = '<?php echo $this->basePath() . '/transaction/delete/id'; ?>' + id;
+		var url = '<?php echo $this->basePath() . '/transaction/delete/id/'; ?>' + id;
 		var params = 'confirm=yes';
 
 		http.open('POST', url, true);
@@ -25,8 +25,7 @@
 			}
 		}
 		
-		http.send(params);
-		alert(url);		
+		http.send(params);	
 	}
 </script>
 
@@ -96,7 +95,7 @@
 				<td><?=$row['subcategory']?></td>
 				<td><?=$row['description']?></td>
 				<td>&euro; <?=sprintf('%.02f', $row['amount'] / 100.0)?></td>
-				<td><a href="javascript:delete_transaction(<?php echo $row['id'] ?>);">Delete</a></td>				
+				<td><a href="javascript:delete_transaction(<?php echo $row['id'] ?>);"><img style="width:24px" src="<?php echo $this->basePath() . '/img/icons/delete.svg' ?>"</a></td>				
 			</tr>	
 <?php
 		$subtotal += $row['amount'];
@@ -123,9 +122,14 @@
 <table class="table-hover">
 <?php
 	$week = 0;
+	$subtotal = 0;
 
 	while($row = $this->overview->fetch()) {	
 		if($week <> $row['week']) {
+			if($week != 0) {
+				echo('<tr style="border-top: 1px solid #000000"><td></td><td>&euro; ' . sprintf('%.2f', $subtotal / 100.0) . '</td></tr>');
+				$subtotal = 0;
+			}
 ?>
 			<tr><td colspan="2">
 			<b>Week <?=$row['week']?></b>
@@ -139,7 +143,10 @@
 			<td>&euro; <?=sprintf('%.2f', $row['total'] / 100.0)?></td>
 		</tr>
 <?php
+		$subtotal += $row['total'];
 	}
+	
+	echo('<tr style="border-top: 1px solid #000000"><td></td><td>&euro; ' . sprintf('%.2f', $subtotal / 100.0) . '</td></tr>');	
 ?>
 </table>
 

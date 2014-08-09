@@ -52,5 +52,59 @@
 		{
 			$this->tableGateway->delete(array('id' => $id));
 		}
+		
+		
+		public function getTransactionsInPeriod($from, $to)
+		{ 
+			global $database;
+
+			$query = "SELECT category.name AS category, subcategory.name AS subcategory, transaction.*
+					  FROM transaction, category, subcategory
+					  WHERE subcategory.category_id = category.id AND subcategory_id = subcategory.id AND timestamp >= :timespan_0 AND timestamp <= :timespan_1
+					  ORDER BY timestamp, transaction.id";
+		
+			$from = date('Y-m-d', $from);
+			$to   = date('Y-m-d', $to);
+			
+			$stmt = $database->prepare($query);
+			$stmt->bindParam('timespan_0', $from);
+			$stmt->bindParam('timespan_1', $to);
+			$stmt->execute();
+			
+			return $stmt;
+		}
+		
+		public function getOverviewBy($period, $category)
+		{
+			$group_by = [];
+			
+			if($period == 'week')
+				$group_by[] = 'yearweek';
+			elseif($period == 'month')
+				$group_by[] = 'yearmonth';
+			elseif($period == 'year')
+				$group_by[] = 'year';
+			
+			if($category)
+				$group_by[] = 'category_id';
+			
+			global $database;
+			$query = "SELECT
+						YEARWEEK(timestamp, 3) as yearweek,
+						WEEK(timestamp, 3) as week,
+						MONTH(timestamp) as month,
+						SUM(amount) as total,
+						category.name AS category
+						FROM transaction, category, subcategory
+						WHERE subcategory.category_id = category.id AND subcategory_id = subcategory.id
+						GROUP BY " . join(", ", $group_by) . "
+						ORDER BY timestamp DESC, category";
+		
+			$stmt = $database->prepare($query);
+			$stmt->execute();
+			
+			return $stmt;
+		}
+		
 	}
 	
