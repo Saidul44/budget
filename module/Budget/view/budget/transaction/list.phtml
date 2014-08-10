@@ -126,7 +126,8 @@
 	$week = 0;
 	$subtotal = 0;
 
-	while($row = $this->overview->fetch()) {	
+	foreach($this->overview as $row) {
+	//while($row = $this->overview->fetch()) {	
 		if($week <> $row['week']) {
 			if($week != 0) {
 				echo('<tr style="border-top: 1px solid #000000"><td></td><td>&euro; ' . sprintf('%.2f', $subtotal / 100.0) . '</td></tr>');

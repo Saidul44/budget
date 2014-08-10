@@ -45,22 +45,9 @@
 		ini_set('display_errors', 1);
 		error_reporting(~0);
 	}
-
-	
-	// Setup database
-	$global = require 'config/autoload/global.php';
-	$local = require 'config/autoload/local.php';
-	
-	/* Connect to the database */
-	$database = new PDO('mysql' . 
-			':host=' . $global['db']['hostname'] . 
-			';dbname=' . $global['db']['database'],
-			$local['db']['username'], $local['db']['password']);
-
 	
 	// Start application
 	Zend\Mvc\Application::init(require 'config/application.config.php')->run();
-
 	
 	function show_error($message)
 	{

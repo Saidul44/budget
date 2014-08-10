@@ -6,6 +6,7 @@
 	use Zend\Db\Sql\Where;
 	use Zend\Db\TableGateway\TableGateway;
 	use Zend\Db\ResultSet\ResultSet;
+	use Zend\Db\Sql\Expression;
 	
 	class TransactionTable
 	{
@@ -60,8 +61,6 @@
 		
 		public function getTransactionsInPeriod($from, $to)
 		{ 
-			global $database;
-
 			$select = new Select();			
 			$select->from(array('t' => 'transaction'))
 				   ->columns(array('id', 'timestamp', 'description', 'amount'))
@@ -90,23 +89,22 @@
 			if($category)
 				$group_by[] = 'category_id';
 			
-			global $database;
-			$query = "SELECT
-						YEARWEEK(timestamp, 3) as yearweek,
-						WEEK(timestamp, 3) as week,
-						MONTH(timestamp) as month,
-						SUM(amount) as total,
-						category.name AS category
-						FROM transaction, category, subcategory
-						WHERE subcategory.category_id = category.id AND subcategory_id = subcategory.id
-						GROUP BY " . join(", ", $group_by) . "
-						ORDER BY timestamp DESC, category";
-		
-			$stmt = $database->prepare($query);
-			$stmt->execute();
-			
-			return $stmt;
+			$select = new Select();
+			$select->from(array('t' => 'transaction'))
+				   ->columns(array(
+				   		'yearweek' => new Expression('YEARWEEK(timestamp, 3)'),
+				   		'week' => new Expression('WEEK(timestamp, 3)'),
+				   		'month' => new Expression('MONTH(timestamp)'),
+				   		'total' => new Expression('SUM(amount)')))
+				   ->join(array('s' => 'subcategory'), 's.id = t.subcategory_id')
+				   ->join(array('c' => 'category'), 'c.id = s.category_id', array('category' => 'name'))
+				   ->group($group_by)
+				   ->order(array('t.timestamp DESC', 'category'));
+
+			$statement = $this->tableGateway->getSql()->prepareStatementForSqlObject($select);
+			$result = $statement->execute();
+
+			return $result;
 		}
-		
 	}
 	
