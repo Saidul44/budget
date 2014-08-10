@@ -46,14 +46,14 @@ return array(
 	'router' => array(
 		'routes' => $routes
 	),
-	
+			
 	'controllers' => array(
 		'invokables' => array(
 			'Budget\Controller\Index' => 'Budget\Controller\IndexController',
 			'Budget\Controller\Transaction' => 'Budget\Controller\TransactionController'
 		)
 	),
-		
+
 	'view_manager' => array(
 		'display_not_found_reason' => true,
 		'display_exceptions' => true,

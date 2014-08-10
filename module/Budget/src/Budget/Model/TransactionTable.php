@@ -1,7 +1,11 @@
 <?php 
 	namespace Budget\Model;
 	
+	use Zend\Db\Sql\Sql;
+	use Zend\Db\Sql\Select;
+	use Zend\Db\Sql\Where;
 	use Zend\Db\TableGateway\TableGateway;
+	use Zend\Db\ResultSet\ResultSet;
 	
 	class TransactionTable
 	{
@@ -58,20 +62,18 @@
 		{ 
 			global $database;
 
-			$query = "SELECT category.name AS category, subcategory.name AS subcategory, transaction.*
-					  FROM transaction, category, subcategory
-					  WHERE subcategory.category_id = category.id AND subcategory_id = subcategory.id AND timestamp >= :timespan_0 AND timestamp <= :timespan_1
-					  ORDER BY timestamp, transaction.id";
-		
-			$from = date('Y-m-d', $from);
-			$to   = date('Y-m-d', $to);
+			$select = new Select();			
+			$select->from(array('t' => 'transaction'))
+				   ->columns(array('id', 'timestamp', 'description', 'amount'))
+				   ->join(array('s' => 'subcategory'), 's.id = t.subcategory_id', array('subcategory' => 'name'))
+				   ->join(array('c' => 'category'), 'c.id = s.category_id', array('category' => 'name'))
+				   ->where(array('t.timestamp >= ?' => date('Y-m-d', $from), 't.timestamp <= ?' => date('Y-m-d', $to)))
+				   ->order(array('t.timestamp', 't.id'));
 			
-			$stmt = $database->prepare($query);
-			$stmt->bindParam('timespan_0', $from);
-			$stmt->bindParam('timespan_1', $to);
-			$stmt->execute();
+			$statement = $this->tableGateway->getSql()->prepareStatementForSqlObject($select);
+			$result = $statement->execute();
 			
-			return $stmt;
+			return $result;
 		}
 		
 		public function getOverviewBy($period, $category)

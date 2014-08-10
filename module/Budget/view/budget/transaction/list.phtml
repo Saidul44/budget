@@ -79,8 +79,10 @@
 <?php
 	$subtotal = 0;
 	$timestamp = '';
-	while($row = $this->transactions->fetch())
+
+	foreach($this->transactions as $row)
 	{
+		
 		if($timestamp == '') $timestamp = $row['timestamp'];
 		
 		if($timestamp <> $row['timestamp']) {
