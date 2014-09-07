@@ -123,6 +123,28 @@
 			return $viewModel;
 		}
 		
+		function byMonthAction()
+		{
+			/* Get data for weekly overview */
+			$income_overview = $this->getTransactionTable()->getOverviewBy('month', true, 'income');
+			$expenses_overview = $this->getTransactionTable()->getOverviewBy('month', true, 'expenses');
+
+			/* Make a list of periods */
+			$keys_1 = array_keys($income_overview);
+			$keys_2 = array_keys($expenses_overview);
+			
+			$periods = array_unique(array_merge($keys_1, $keys_2));
+			sort($periods);
+			
+			/* Output stage */
+			$viewModel = new ViewModel(array(
+				'periods' => $periods,
+				'income' => $income_overview,
+				'expenses' => $expenses_overview,
+			));
+				
+			return $viewModel;
+		}
 
 		function addAction()
 		{

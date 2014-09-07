@@ -1,0 +1,47 @@
+<div>
+
+<h2>Overview by month</h2>
+
+<table class="table-hover">
+
+<?php 
+	$periods = array_reverse($periods);
+
+	foreach($periods as $period) {
+?>
+		<tr><td colspan="2">
+			<b>Period: </b><?php echo(floor($period / 100)); ?>/<?php echo($period % 100); ?>
+		</td></tr>
+<?php 
+		if(array_key_exists($period, $income))
+			$in = $income[$period];
+		else
+			$in = array();
+		$out = $expenses[$period];
+		
+		if(array_key_exists($period, $expenses))
+			$out = $expenses[$period];
+		else
+			$out = array();
+
+		$total = 0;
+		
+		foreach($out as $row) {
+			echo('<tr><td>' . $row['category'] . '</td><td style="text-align: right">&euro; ' . sprintf('%.2f', -$row['total'] / 100.0) . '</td></tr>');
+			$total += $row['total'];
+		}
+				
+		
+		foreach($in as $row) {
+			echo('<tr><td>' . $row['category'] . '</td><td style="text-align: right">&euro; ' . sprintf('%.2f', -$row['total'] / 100.0) . '</td></tr>');
+			$total += $row['total'];
+		}
+		
+		echo('<tr><td></td><td style="border-top: 1px solid black; text-align: right">&euro; ' . sprintf('%.2f', -$total / 100) . '</td></tr>');
+	}
+?>
+
+</table>
+
+
+</div>

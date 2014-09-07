@@ -75,7 +75,7 @@
 			return $result;
 		}
 		
-		public function getOverviewBy($period, $category)
+		public function getOverviewBy($period, $category, $type = 'expenses')
 		{
 			$group_by = [];
 			
@@ -88,11 +88,13 @@
 			
 			if($category)
 				$group_by[] = 'category_id';
-			
+					
 			$select = new Select();
 			$select->from(array('t' => 'transaction'))
 				   ->columns(array(
 				   		'yearweek' => new Expression('YEARWEEK(timestamp, 3)'),
+				   		'yearmonth' => new Expression("DATE_FORMAT(timestamp, '%Y%m')"),
+				   		'year' => new Expression('YEAR(timestamp)'),
 				   		'week' => new Expression('WEEK(timestamp, 3)'),
 				   		'month' => new Expression('MONTH(timestamp)'),
 				   		'total' => new Expression('SUM(amount)')))
@@ -101,10 +103,31 @@
 				   ->group($group_by)
 				   ->order(array('t.timestamp DESC', 'category'));
 
+			if($type == 'income') {
+				$select->where('amount < 0');
+			} elseif($type == 'expenses') {
+				$select->where('amount > 0');
+			} else {
+				throw Exception('Invalid value for type argument.');
+			}
+
+			// Execute statement
 			$statement = $this->tableGateway->getSql()->prepareStatementForSqlObject($select);
 			$result = $statement->execute();
 
-			return $result;
+			// Fetch rows and group by month
+			$records = array();
+			
+			foreach($result as $row) {
+				if($period == 'week')
+					$records[$row['yearweek']][] = $row;
+				elseif($period == 'month')
+					$records[$row['yearmonth']][] = $row;
+				elseif($period == 'year')
+					$records[$row['year']][] = $row;
+			}
+			
+			return $records;
 		}
 	}
 	

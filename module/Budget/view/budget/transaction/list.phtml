@@ -1,6 +1,6 @@
 <?php 
 	function write_subtotal($date, $amount) {
-		echo('<tr style="border-top: 1px solid #000000"><td></td><td colspan="3"</td><td><i>&euro; ' . sprintf('%.2f', $amount / 100.0) . '</i><br />&nbsp;</td><td></td></tr>');
+		echo('<tr style="border-top: 1px solid #000000"><td></td><td colspan="3"</td><td style="text-align: right;"><i>&euro; ' . sprintf('%.2f', $amount / 100.0) . '</i><br />&nbsp;</td><td></td></tr>');
 	}
 ?>
 
@@ -96,7 +96,7 @@
 				<td><?=$row['category']?></td>
 				<td><?=$row['subcategory']?></td>
 				<td><?=$row['description']?></td>
-				<td>&euro; <?=sprintf('%.02f', $row['amount'] / 100.0)?></td>
+				<td style="text-align: right;">&euro; <?=sprintf('%.02f', $row['amount'] / 100.0)?></td>
 				<td><a href="javascript:delete_transaction(<?php echo $row['id'] ?>);"><img style="width:24px" src="<?php echo $this->basePath() . '/img/icons/delete.svg' ?>"</a></td>				
 			</tr>	
 <?php
@@ -109,7 +109,7 @@
 	<tfoot>
 		<tr>		
 			<td colspan="6">
-			<a href="<?php $this->basePath . '/transaction/add' ?>">Add new transactions</a>
+			<a href="<?php echo($this->basePath() . '/transaction/add'); ?>">Add new transactions</a>
 			</td>
 		</tr>
 	</tfoot>
@@ -123,34 +123,28 @@
 
 <table class="table-hover">
 <?php
-	$week = 0;
-	$subtotal = 0;
+	$periods = array_keys($this->overview);
 
-	foreach($this->overview as $row) {
-	//while($row = $this->overview->fetch()) {	
-		if($week <> $row['week']) {
-			if($week != 0) {
-				echo('<tr style="border-top: 1px solid #000000"><td></td><td>&euro; ' . sprintf('%.2f', $subtotal / 100.0) . '</td></tr>');
-				$subtotal = 0;
-			}
+	foreach($periods as $period) {
 ?>
-			<tr><td colspan="2">
-			<b>Week <?=$row['week']?></b>
-			</td></tr>
+		<tr><td colspan="2">
+			<b>Week <?php echo(floor($period / 100)); ?> / <?php echo($period % 100); ?> </b>
+		</td></tr>
 <?php
-			$week = $row['week'];
-		}
-?>
-		<tr>
-			<td><?=$row['category']?></td>
-			<td>&euro; <?=sprintf('%.2f', $row['total'] / 100.0)?></td>
-		</tr>
-<?php
-		$subtotal += $row['total'];
-	}
+		$data = $this->overview[$period];
+		$total = 0;
 	
-	echo('<tr style="border-top: 1px solid #000000"><td></td><td>&euro; ' . sprintf('%.2f', $subtotal / 100.0) . '</td></tr>');	
+		foreach($data as $row) {
+?>
+			<tr>
+				<td><?php echo($row['category']); ?></td>
+				<td style="text-align: right;">&euro; <?php echo(sprintf('%.2f', $row['total'] / 100.0)); ?></td>
+			</tr>
+<?php
+			$total += $row['total'];
+		}
+
+		echo('<tr style="border-top: 1px solid #000000"><td></td><td style="text-align: right;">&euro; ' . sprintf('%.2f', $total / 100.0) . '</td></tr>');		
+	}
 ?>
 </table>
-
-</div>
