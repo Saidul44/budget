@@ -1,5 +1,10 @@
 RewriteEngine On
 
+AuthType Basic
+AuthName "Budget Application"
+AuthUserFile /home/ivarclemens/applications/budget/www/.htpasswd
+Require valid-user
+
 RewriteCond %{REQUEST_FILENAME} -f [NC,OR]
 RewriteCond %{REQUEST_FILENAME) -s [OR]
 RewriteCond %{REQUEST_FILENAME} -l [OR]
