@@ -5,12 +5,14 @@
 <table class="table-hover">
 
 <?php 
+	$months = array('January', 'February', 'March', 'April', 'May', 'June',
+								  'July', 'August', 'September', 'October', 'November', 'December');
 	$periods = array_reverse($periods);
 
 	foreach($periods as $period) {
 ?>
 		<tr><td colspan="2">
-			<b>Period: </b><?php echo(floor($period / 100)); ?>/<?php echo($period % 100); ?>
+			<u><b>Period:</b></u> <u><b><?php echo($months[$period%100 - 1] . ' ' . floor($period / 100)); ?></b></u>
 		</td></tr>
 <?php 
 		if(array_key_exists($period, $income))

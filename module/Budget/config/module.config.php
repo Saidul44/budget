@@ -4,7 +4,7 @@ $routes = array(
 		'type' => 'segment',
 		'options' => array(
 			'route' => '/transaction[/:action]',
-			'constraints' => array('action' => '[A-Za-z]*'),
+			'constraints' => array('action' => '[A-Z_a-z]*'),
 			'defaults' => array(
 				'controller' => 'Budget\Controller\Transaction',
 				'action' => 'list',

@@ -15,8 +15,10 @@
         <div id="menu">
             <ul>
                 <li><a href="<?php echo $this->basePath() . '/index' ?>">Home</a></li>                
-                <li><a href="<?php echo $this->basePath() . '/transaction/list' ?>">Transactions</a></li>
-            </ul>
+                <li><a href="<?php echo $this->basePath() . '/transaction/list' ?>">Transactions</a>
+                (<a href="<?php echo($this->basePath() . '/transaction/byMonth') ?>">by month</a>)
+                </li>
+                </ul>
         </div>
         
         <div id="main-area">
