@@ -146,6 +146,18 @@
 			return $viewModel;
 		}
 
+		function matrixAction()
+		{
+			$matrix = $this->getTransactionTable()->getOverviewMatrix();
+			
+			$viewModel = new ViewModel(array(
+				'matrix' => $matrix
+			));
+
+			return $viewModel;
+		}
+		
+		
 		function addAction()
 		{
 			$subcategories = $this->getSubcategoryTable()->fetchAll();

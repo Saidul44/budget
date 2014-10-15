@@ -98,7 +98,7 @@
 				   		'week' => new Expression('WEEK(timestamp, 3)'),
 				   		'month' => new Expression('MONTH(timestamp)'),
 				   		'total' => new Expression('SUM(amount)')))
-				   ->join(array('s' => 'subcategory'), 's.id = t.subcategory_id')
+				   ->join(array('s' => 'subcategory'), 's.id = t.subcategory_id', array())
 				   ->join(array('c' => 'category'), 'c.id = s.category_id', array('category' => 'name'))
 				   ->group($group_by)
 				   ->order(array('t.timestamp DESC', 'category'));
@@ -129,5 +129,20 @@
 			
 			return $records;
 		}
+
+		public function getOverviewMatrix()
+		{			
+			$subtotal = "SELECT SUM(amount) FROM transaction AS t, subcategory AS s WHERE DATE_FORMAT(timestamp, '%Y%m') = d.yearmonth AND t.subcategory_id = s.id AND s.category_id = c.id";
+			
+			$query = "SELECT c.name, d.yearmonth, ($subtotal) AS subtotal " .
+					 "FROM category AS c, (SELECT DATE_FORMAT(timestamp, '%Y%m') as yearmonth FROM transaction as t2 GROUP BY yearmonth) AS d " .					
+					 "ORDER BY c.name, d.yearmonth DESC;";
+			
+			$adapter = $this->tableGateway->getAdapter();
+			$resultSet = $adapter->query($query, \Zend\Db\Adapter\Adapter::QUERY_MODE_EXECUTE);
+
+			return $resultSet;
+		}
+		
 	}
 	

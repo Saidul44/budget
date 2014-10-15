@@ -1,0 +1,59 @@
+<?php 
+	function open_row($category) {
+		echo('<tr><td>' . $category . '</td>');
+	}
+	
+	function close_row() {
+		echo('</tr>');
+	}
+
+	$months = array('January', 'February', 'March', 'April', 'May', 'June',
+			'July', 'August', 'September', 'October', 'November', 'December');
+	
+	
+	$periods = array('201409', '201408', '201407', '201406');
+	
+	echo('<table>');
+
+	echo('<tr><th style="text-align: left">Category</th>');
+	
+	foreach($periods as $period) {
+		echo('<th style="text-align: right">' . $months[$period % 100 - 1] . '</th>');
+	}
+	
+	echo('</tr>');
+	
+	
+	$category = '';
+	$totals = array();
+	
+	foreach($matrix as $row) {		
+		if($row['name'] != $category) {
+			if($category != '') {
+				close_row();
+			}
+			
+			$category = $row['name'];			
+			open_row($category);
+		}
+		
+		echo('<td style="text-align: right; width: 100px;">&euro; ' . sprintf('%.02f', $row['subtotal'] / 100.0) . '</td>');
+		
+		if(!array_key_exists($row['yearmonth'], $totals)) {
+			$totals[$row['yearmonth']] = 0;
+		}
+		
+		$totals[$row['yearmonth']] += $row['subtotal'];
+	}
+	
+	close_row();
+	
+	echo('<tr><th style="text-align: left">Total</th>');
+	
+	foreach($periods as $period) {
+		echo('<th style="text-align: right">&euro; ' . sprintf('%.02f', $totals[$period] / 100.0) . '</th>');
+	}
+	
+
+	echo('</table>');
+?>
